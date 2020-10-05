@@ -1,0 +1,75 @@
+<div class="row">
+  <div class="col-md-12">
+    <h1>{{restaurant.name}}</h1>
+    <span class="badge badge-secondary">
+      <p>{{restaurant.Category.name}}</p>
+    </span>
+  </div>
+  <div class="col-md-4">
+    <img class="img-responsive center-block" src="{{restaurant.image}}"
+      style="width: 250px;margin-top: 25px;margin-bottom: 25px;">
+    <div class="well">
+      <ul class="list-unstyled">
+        <li><strong>營業時間 / Time:</strong> {{restaurant.opening_hours}}</li>
+        <li><strong>電話 / Tel:</strong> {{restaurant.tel}}</li>
+        <li><strong>地址 / Address:</strong> {{restaurant.address}}</li>
+      </ul>
+    </div>
+  </div>
+  <div class="col-md-8">
+
+    {{#if isFavorited }}
+    <form action="/favorite/{{restaurant.id}}?_method=DELETE" method="POST" style="display: contents;"><button
+        type="submit" class="btn btn-danger">移除收藏 / Favorite - </button></form>
+    {{else}}
+    <form action="/favorite/{{restaurant.id}}" method="POST" style="display: contents;"><button type="submit"
+        class="btn btn-primary">加入收藏 / Favorite + </button></form>
+    {{/if}}
+
+    {{#if isLiked }}
+    <form action="/like/{{restaurant.id}}?_method=DELETE" method="POST" style="display: contents;"><button type="submit"
+        class="btn btn-danger">不喜歡 / UnLike</button></form>
+    {{else}}
+    <form action="/like/{{restaurant.id}}" method="POST" style="display: contents;"><button type="submit"
+        class="btn btn-primary">喜歡 / Like</button></form>
+    {{/if}}
+    <hr>
+    <br />
+    <h4>詳細資料 / Description：</h4>
+    <p>{{restaurant.description}}</p>
+    <hr>
+    <ul>
+      <li>評論數 / CommentsCount ：{{restaurant.Comments.length}}</li>
+      <li>瀏覽數 / ViewCount：{{restaurant.viewCount}}</li>
+      <li>收藏數 / FavoriteCount：{{restaurant.FavoritedUsers.length}}</li>
+    </ul>
+  </div>
+</div>
+<hr>
+<br />
+<h3>評論 / Comments：</h3>
+{{#each restaurant.Comments}}
+
+{{!-- 管理者 刪除按鈕 --}}
+{{#if ../user.isAdmin}}
+<form action="/comments/{{this.id}}?_method=DELETE" method="POST" style="float: right;">
+  <button type="submit" class="btn btn-danger">刪除 / Delete</button>
+</form>
+{{/if}}
+
+<blockquote class="blockquote mb-0">
+  <h4><a href="/users/{{this.User.id}}">{{this.User.name}}</a></h4>
+  <p>{{this.text}}</p>
+  <footer class="blockquote-footer">{{moment this.createdAt}}</footer>
+</blockquote>
+<hr />
+{{/each}}
+
+<form action="/comments" method="POST">
+  <div class="form-group">
+    <label for="text">新增評論 / NewComments：</label>
+    <textarea class="form-control" id="text" name="text" rows="3"></textarea>
+  </div>
+  <input type="hidden" name="restaurantId" value="{{restaurant.id}}" />
+  <button type="submit" class="btn btn-primary">送出 / Submit</button>
+</form>
